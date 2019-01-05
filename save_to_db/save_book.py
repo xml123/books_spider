@@ -1,6 +1,7 @@
 import datetime
 
 from config.read_sql import get_mysql_db
+from get_html.get_html_text import save_img
 
 #保存作者和分类
 def save_author_tag(one_book_dict):
@@ -73,7 +74,9 @@ def save_book_info(one_book_dict):
     # 获取书本的url
     book_url = one_book_dict.get('url')
     # 获取书本的封面图
-    book_img = one_book_dict.get('img')
+    book_img_url = one_book_dict.get('img')
+
+    book_img = save_img(book_img_url) #下载该图片
     #获取作者
     book_author = one_book_dict.get('author')
     #获取分类
