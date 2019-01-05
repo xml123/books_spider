@@ -59,7 +59,7 @@ def save_img(url):
     name = '%s.jpg' % t
     print('name',name)
     try:
-        path = r'/Users/xumingliang/userReact/booksApi/static/%s' % name
+        path = r'/home/ubuntu/workspace/books_api/static/%s' % name
         print('path',path)
         request03 = request.Request(url,None,headers)
         response = request.urlopen(request03)
