@@ -35,7 +35,7 @@ def get_headers():
     return headers
 
 def get_dl():
-    url_text = requests.get('http://tpv.daxiangdaili.com/ip/?tid=558553784962958&num=1&delay=1&ports=80&filter=on')
+    url_text = requests.get('http://tpv.daxiangdaili.com/ip/?tid=558553784962958&num=1&delay=3&protocol=http&ports=80&filter=on')
     try:
         url_li = url_text.content.decode('utf-8')
         #print('url',url_li)
