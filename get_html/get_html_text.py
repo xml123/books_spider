@@ -34,14 +34,25 @@ def get_headers():
     headers = {'User-Agent':random.choice(user_agents)}
     return headers
 
+def get_dl():
+    url_text = requests.get('http://tpv.daxiangdaili.com/ip/?tid=558553784962958&num=1&delay=1&ports=80&filter=on')
+    try:
+        url_li = url_text.content.decode('utf-8')
+        #print('url',url_li)
+    except:
+        print('代理获取出错了')
+    proxies = { 'http':'http://'+url_li }
+    return proxies
 
 # 获取URL的网页HTML
 def get_html_text(url):
-    # headers = {
-    #     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0",
-    # }
-    headers = get_headers()
-    res = requests.get(url,headers=headers)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0",
+    }
+    #headers = get_headers()
+    proxies = get_dl()
+    print('urldl',proxies)
+    res = requests.get(url,headers=headers,proxies=proxies,timeout=30)
     html_bytes = res.content
     code_style = chardet.detect(html_bytes).get("encoding")
     try:

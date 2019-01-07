@@ -2,3 +2,4 @@
 __pycache__/.idea
 __pycache__/
 conf/
+config/read_sql.py
