@@ -29,6 +29,7 @@ def get_info_and_chapter_url(one_book_url):
     book_info['url'] = one_book_url
     # 得到书的标题
     title_res = html_parser(book_html_text, '//*[@id="info"]/h1/text()')
+    print('booksName',title_res[0])
     if len(title_res):
         title = title_res[0]
         book_info["name"] = title
@@ -44,7 +45,6 @@ def get_info_and_chapter_url(one_book_url):
         book_info['kind'] = ''
     # 得到书的简介
     book_abstract = html_parser(book_html_text, '//*[@id="intro"]/p[1]/text()')
-    print('book_abstract',book_abstract[0])
     if len(book_abstract):
         book_info["abstract"] = book_abstract[0]
     else:
@@ -53,16 +53,13 @@ def get_info_and_chapter_url(one_book_url):
     book_img_list = html_parser(book_html_text, '//*[@id="fmimg"]/img/@src')
     if len(book_img_list):
         book_half_img = book_img_list[0]
-        # t = int(time.time())
-        # name = '%s.jpg' % t
         # print('name',name)
         print('book_half_img',book_half_img)
         # book_img = r"http://www.biquge.com.tw" + book_half_img
         # 将远程图片下载到本地，第二个参数就是要保存到本地的文件名
-        name = save_img(book_half_img)
 
         #book_img = book_half_img
-        book_info["img"] = name
+        book_info["img"] = book_half_img
     else:
         book_info['img'] = ''
     # 得到书本的作者信息

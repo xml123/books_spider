@@ -22,7 +22,7 @@ def get_mysql_db():
    # mysql_dict = get_mysql_conf()
     #链接数据库
     connection=pymysql.connect(
-        host="127.0.0.1",
+        host="0.0.0.0",
         user="root",
         password="xml123",
         port=3306,

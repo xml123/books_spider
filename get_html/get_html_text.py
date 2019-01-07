@@ -57,10 +57,8 @@ def save_img(url):
     headers = get_headers()
     t = int(time.time())
     name = '%s.jpg' % t
-    print('name',name)
     try:
-        path = r'/home/ubuntu/workspace/books_api/static/%s' % name
-        print('path',path)
+        path = r'/home/ubuntu/workspace/books_api/static/image/%s' % name
         request03 = request.Request(url,None,headers)
         response = request.urlopen(request03)
         with open (path,"wb") as f :
