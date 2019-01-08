@@ -6,7 +6,7 @@ import random
 from urllib import request
 import time
 import re
-import execjs
+# import execjs
 
 def get_headers():
     '''
@@ -66,43 +66,43 @@ def get_dl():
     }
     return proxy
 
-def executejs(html,url):
-    # 提取其中的JS加密函数
-    try:
-        __jsluid = html.headers["Set-Cookie"].split(';')[0]
-        print('__jsluid1',__jsluid)
-        #cookie1 = __jsluid
+# def executejs(html,url):
+#     # 提取其中的JS加密函数
+#     try:
+#         __jsluid = html.headers["Set-Cookie"].split(';')[0]
+#         print('__jsluid1',__jsluid)
+#         #cookie1 = __jsluid
 
-        get_js = re.findall(r'<script>(.*?)</script>', html.text)[0].replace('eval', 'return')
-        #print('get_js',get_js)
-        resHtml = "function getClearance(){" + get_js + "};"
-        #print('resHtml',resHtml)
-        ctx = execjs.compile(resHtml)
-        #print('ctx',ctx)
-        # 一级解密结果
-        temp1 = ctx.call('getClearance')
-        #print('temp1',temp1)
-
-
-        s = 'var a' + temp1.split('document.cookie')[1].split("Path=/;'")[0]+"Path=/;';return a;"
-        s = re.sub(r'document.create.*?firstChild.href', '"{}"'.format(url), s)
-        # print ('s',s)
-        resHtml = "function getClearance(){" + s + "};"
-        ctx = execjs.compile(resHtml)
-        # 二级解密结果
-        jsl_clearance = ctx.call('getClearance')
-        #print('jsl_clearance',jsl_clearance)
-
-        return jsl_clearance
-    except Exception as e:
-        print('解析cookie出错',e)
-        return ''
+#         get_js = re.findall(r'<script>(.*?)</script>', html.text)[0].replace('eval', 'return')
+#         #print('get_js',get_js)
+#         resHtml = "function getClearance(){" + get_js + "};"
+#         #print('resHtml',resHtml)
+#         ctx = execjs.compile(resHtml)
+#         #print('ctx',ctx)
+#         # 一级解密结果
+#         temp1 = ctx.call('getClearance')
+#         #print('temp1',temp1)
 
 
-def parse_cookie(string):
-    string = string.replace("document.cookie='", "")
-    clearance = string.split(';')[0]
-    return {clearance.split('=')[0]: clearance.split('=')[1]}
+#         s = 'var a' + temp1.split('document.cookie')[1].split("Path=/;'")[0]+"Path=/;';return a;"
+#         s = re.sub(r'document.create.*?firstChild.href', '"{}"'.format(url), s)
+#         # print ('s',s)
+#         resHtml = "function getClearance(){" + s + "};"
+#         ctx = execjs.compile(resHtml)
+#         # 二级解密结果
+#         jsl_clearance = ctx.call('getClearance')
+#         #print('jsl_clearance',jsl_clearance)
+
+#         return jsl_clearance
+#     except Exception as e:
+#         print('解析cookie出错',e)
+#         return ''
+
+
+# def parse_cookie(string):
+#     string = string.replace("document.cookie='", "")
+#     clearance = string.split(';')[0]
+#     return {clearance.split('=')[0]: clearance.split('=')[1]}
 
 # 获取URL的网页HTML
 def get_html_text(url):
