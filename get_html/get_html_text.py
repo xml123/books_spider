@@ -5,7 +5,8 @@ import requests
 import random
 from urllib import request
 import time
-
+import re
+import execjs
 
 def get_headers():
     '''
@@ -35,7 +36,8 @@ def get_headers():
     return headers
 
 def get_dl():
-
+    targetUrl = "http://proxy.abuyun.com/switch-ip"
+    #targetUrl = "http://proxy.abuyun.com/current-ip"
     # 代理服务器
     proxyHost = "http-cla.abuyun.com"
     proxyPort = "9030"
@@ -55,26 +57,83 @@ def get_dl():
         "http"  : proxyMeta,
         "https" : proxyMeta,
     }
-    print ('resp1',resp.status_code)
-    print ('resp2',resp.text) 
-    return proxies
+    resp = requests.get(targetUrl, proxies=proxies)
+    # print(resp.status_code)
+    # print('resp',resp.text)
+    ip_string = resp.text.split(',')[0]
+    proxy = {
+       "http":"http://%s" % ip_string
+    }
+    return proxy
+
+def executejs(html,url):
+    # 提取其中的JS加密函数
+    try:
+        __jsluid = html.headers["Set-Cookie"].split(';')[0]
+        print('__jsluid1',__jsluid)
+        #cookie1 = __jsluid
+
+        get_js = re.findall(r'<script>(.*?)</script>', html.text)[0].replace('eval', 'return')
+        #print('get_js',get_js)
+        resHtml = "function getClearance(){" + get_js + "};"
+        #print('resHtml',resHtml)
+        ctx = execjs.compile(resHtml)
+        #print('ctx',ctx)
+        # 一级解密结果
+        temp1 = ctx.call('getClearance')
+        #print('temp1',temp1)
+
+
+        s = 'var a' + temp1.split('document.cookie')[1].split("Path=/;'")[0]+"Path=/;';return a;"
+        s = re.sub(r'document.create.*?firstChild.href', '"{}"'.format(url), s)
+        # print ('s',s)
+        resHtml = "function getClearance(){" + s + "};"
+        ctx = execjs.compile(resHtml)
+        # 二级解密结果
+        jsl_clearance = ctx.call('getClearance')
+        #print('jsl_clearance',jsl_clearance)
+
+        return jsl_clearance
+    except Exception as e:
+        print('解析cookie出错',e)
+        return ''
+
+
+def parse_cookie(string):
+    string = string.replace("document.cookie='", "")
+    clearance = string.split(';')[0]
+    return {clearance.split('=')[0]: clearance.split('=')[1]}
 
 # 获取URL的网页HTML
 def get_html_text(url):
-    # headers = {
-    #     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0",
-    # }
-    headers = get_headers()
-    proxies = get_dl()
-    print('urldl',proxies)
-    res = requests.get(url,proxies=proxies,headers=headers,timeout=20)
-    html_bytes = res.content
-    code_style = chardet.detect(html_bytes).get("encoding")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0",
+    }
+    #headers = get_headers()
+    proxy = get_dl()
+    print('proxy',proxy)
+    # 第一次访问获取动态加密的JS
+    # first_html = requests.get(url,headers=headers)
+    # #last_html= first_html.decode('utf-8')
+    # #print('first_html',first_html)
+    # # 执行JS获取Cookie
+    # cookie_str = executejs(first_html,url)
+    # #print('cookie_str',cookie_str)
+    # # 将Cookie转换为字典格式
+    # cookie = parse_cookie(cookie_str)
+    # print('cookies = ',cookie)
+
     try:
+        res = requests.get(url,proxies=proxy,timeout=5)
+        print('res',res)
+        print('code',res.status_code)
+        html_bytes = res.content
+        code_style = chardet.detect(html_bytes).get("encoding")
         html_text = html_bytes.decode(code_style, "ignore")
-    except:
+    except Exception as e:
         print(datetime.datetime.now())
         print("encoding is error")
+        print(e)
         return ''
     return html_text
 
@@ -84,7 +143,7 @@ def save_img(url):
     t = int(time.time())
     name = '%s.jpg' % t
     try:
-        path = r'/home/ubuntu/workspace/books_api/static/image/%s' % name
+        path = r'/Users/xumingliang/userReact/booksApi/static/image/%s' % name
         request03 = request.Request(url,None,headers)
         response = request.urlopen(request03)
         with open (path,"wb") as f :
