@@ -35,12 +35,28 @@ def get_headers():
     return headers
 
 def get_dl():
-    url_text = requests.get('http://tpv.daxiangdaili.com/ip/?tid=558553784962958&num=1&delay=3&protocol=http&ports=80&filter=on')
-    try:
-        url_li = url_text.content.decode('utf-8')
-    except:
-        print('代理获取出错了')
-    proxies = { 'http':'http://'+url_li }
+
+    # 代理服务器
+    proxyHost = "http-cla.abuyun.com"
+    proxyPort = "9030"
+
+    # 代理隧道验证信息
+    proxyUser = "H1K845Z7K8BUO75C"
+    proxyPass = "DF205E31552BB478"
+
+    proxyMeta = "http://%(user)s:%(pass)s@%(host)s:%(port)s" % {
+      "host" : proxyHost,
+      "port" : proxyPort,
+      "user" : proxyUser,
+      "pass" : proxyPass,
+    }
+
+    proxies = {
+        "http"  : proxyMeta,
+        "https" : proxyMeta,
+    }
+    print ('resp1',resp.status_code)
+    print ('resp2',resp.text) 
     return proxies
 
 # 获取URL的网页HTML
@@ -49,9 +65,9 @@ def get_html_text(url):
     #     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0",
     # }
     headers = get_headers()
-    #proxies = get_dl()
-    #print('urldl',proxies)
-    res = requests.get(url,headers=headers,timeout=20)
+    proxies = get_dl()
+    print('urldl',proxies)
+    res = requests.get(url,proxies=proxies,headers=headers,timeout=20)
     html_bytes = res.content
     code_style = chardet.detect(html_bytes).get("encoding")
     try:
