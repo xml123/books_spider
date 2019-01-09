@@ -124,7 +124,7 @@ def get_html_text(url):
     # print('cookies = ',cookie)
 
     try:
-        res = requests.get(url,headers=headers,timeout=15)
+        res = requests.get(url,headers=headers,timeout=30)
         print('code',res.status_code)
         html_bytes = res.content
         code_style = chardet.detect(html_bytes).get("encoding")
@@ -133,6 +133,7 @@ def get_html_text(url):
         print(datetime.datetime.now())
         print("encoding is error")
         print(e)
+        print('url',url)
         return ''
     return html_text
 

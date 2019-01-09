@@ -69,7 +69,7 @@ def save_book_info(one_book_dict):
     book_bull = cursor.fetchone()
     if book_bull:
         print('该书已存在')
-        return 0
+        return 1
 
     # 获取书本的url
     book_url = one_book_dict.get('url')
@@ -195,13 +195,21 @@ def save_chapter(one_chapter):
     # 获取db
     db = get_mysql_db()
     cursor = db.cursor()
+
+    if_book = 'SELECT id FROM books_chapter WHERE chapter_url="%s";' % chapter_url
+    cursor.execute(if_book)
+    book_bull = cursor.fetchone()
+    if book_bull:
+        print('该章节已存在，不再存储')
+        return 1
+
     sql = r"INSERT INTO books_chapter (book_id_id,name,chapter_url,chapter_text,chapter_id) VALUES(%s,'%s','%s','%s','%s');" \
           % (book_id, name, chapter_url, chapter_text,chapter_id)
     try:
         cursor.execute(sql)
         db.commit()
         print(datetime.datetime.now())
-        print("success save one chapter")
+        print("success chapter")
     except:
         db.rollback()
 
