@@ -106,12 +106,12 @@ def get_dl():
 
 # 获取URL的网页HTML
 def get_html_text(url):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0",
-    }
-    #headers = get_headers()
-    proxy = get_dl()
-    print('proxy',proxy)
+    # headers = {
+    #     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0",
+    # }
+    headers = get_headers()
+    # proxy = get_dl()
+    # print('proxy',proxy)
     # 第一次访问获取动态加密的JS
     # first_html = requests.get(url,headers=headers)
     # #last_html= first_html.decode('utf-8')
@@ -124,8 +124,7 @@ def get_html_text(url):
     # print('cookies = ',cookie)
 
     try:
-        res = requests.get(url,proxies=proxy,timeout=5)
-        print('res',res)
+        res = requests.get(url,headers=headers,timeout=15)
         print('code',res.status_code)
         html_bytes = res.content
         code_style = chardet.detect(html_bytes).get("encoding")
