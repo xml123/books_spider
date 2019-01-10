@@ -128,6 +128,23 @@ def get_book_id_by_name(book_name):
     else:
         return 0
 
+#根据书籍id查询该书的保存章节
+def get_book_chapter_info(book_id):
+    db = get_mysql_db()
+    cursor = db.cursor()
+    sql = 'SELECT chapter_url,chapter_id FROM books_chapter WHERE book_id_id="%s" order by id desc;' % book_id
+
+    cursor.execute(sql)
+
+    res = cursor.fetchone()
+    #print('res',res)
+    if res:
+        return res
+    else:
+        return [1,1]
+    
+
+
 # 根据作者获取数据库中的id
 def get_author_id_by_name(author_name):
     db = get_mysql_db()
@@ -200,6 +217,7 @@ def save_chapter(one_chapter):
     cursor.execute(if_book)
     book_bull = cursor.fetchone()
     if book_bull:
+        print('name',name)
         print('该章节已存在，不再存储')
         return 1
 

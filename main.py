@@ -2,7 +2,7 @@ import datetime
 import time
 import random
 
-from get_url.get_bigone_url import get_level_one_url, get_chapter_by_book_info
+from get_url.get_bigone_url import get_level_one_url, get_chapter_by_book_info, get_chapter_by_book_fock
 
 from parse_html.get_info import get_info_and_chapter_url
 from save_to_db.save_book import save_book_info,save_author_tag
@@ -44,14 +44,25 @@ for one in big_one_url_list:
         print("save book faile ,exit this one")
         time.sleep(random.randint(1,3))
         continue
-    try:
-        get_chapter_by_book_info(book_info)
-        time.sleep(random.randint(1,3))
-    except Exception as e:
-        print(datetime.datetime.now())
-        print("save chapter info fail")
-        print(e)
-        time.sleep(random.randint(1,3))
+    if is_success == 1:
+        try:
+            get_chapter_by_book_fock(book_info)
+            time.sleep(random.randint(1,3))
+        except Exception as e:
+            print(datetime.datetime.now())
+            print("save chapter fock info fail")
+            print(e)
+            time.sleep(random.randint(1,3))
+        continue
+    else:
+        try:
+            get_chapter_by_book_info(book_info)
+            time.sleep(random.randint(1,3))
+        except Exception as e:
+            print(datetime.datetime.now())
+            print("save chapter info fail")
+            print(e)
+            time.sleep(random.randint(1,3))
         continue
 
     # 记录结束时间
